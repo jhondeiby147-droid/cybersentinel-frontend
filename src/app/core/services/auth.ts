@@ -10,7 +10,7 @@ import { UserBase } from '../models/models';
 export class Auth {
   private http = inject(HttpClient);
   private platformId = inject(PLATFORM_ID); // Inyectamos el ID de plataforma
-  private apiUrl = 'http://127.0.0.1:8000/api/v1/users';
+  private apiUrl = 'https://jahnnnn-cybersentinel.hf.space/api/v1/users';
 
   // Helper para saber si estamos en el navegador
   private isBrowser(): boolean {

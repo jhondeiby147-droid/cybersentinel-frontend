@@ -15,7 +15,7 @@ import {
 })
 export class Api {
   private http = inject(HttpClient);
-  private baseUrl = 'http://127.0.0.1:8000/api/v1';
+  private baseUrl = 'https://jahnnnn-cybersentinel.hf.space/api/v1';
 
   // --- ANÁLISIS DE IA (RF-02 al RF-05) ---
   analyzeVulnerability(text: string, username: string): Observable<AnalysisResponse> {
