@@ -1,0 +1,14 @@
+/* Archivo: src/app/shared/sidebar/sidebar.scss */
+:host {
+    display: block;
+    height: 100%;
+}
+
+/* Efecto suave para el item activo */
+.router-link-active {
+    /* Usamos CSS puro para evitar conflictos de parsing entre SASS y Tailwind */
+    background-color: rgba(56, 189, 248, 0.1); // cyber-accent con 10% opacidad
+    border-right: 2px solid #38bdf8; // cyber-accent
+    color: #ffffff;
+    box-shadow: inset -4px 0 12px -4px rgba(56, 189, 248, 0.3);
+}

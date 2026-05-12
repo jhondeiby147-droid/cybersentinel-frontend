@@ -1,0 +1,74 @@
+<div class="flex items-center justify-center min-h-screen px-4 py-12 relative overflow-hidden bg-cyber-dark">
+
+    <!-- Elementos decorativos (Gradientes abstractos de fondo) -->
+    <div
+        class="absolute top-[-10%] left-[-10%] w-96 h-96 bg-cyber-accent opacity-20 rounded-full blur-[100px] pointer-events-none">
+    </div>
+    <div
+        class="absolute bottom-[-10%] right-[-10%] w-96 h-96 bg-sev-critical opacity-10 rounded-full blur-[100px] pointer-events-none">
+    </div>
+
+    <!-- Tarjeta principal de Login (Glassmorphism) -->
+    <div class="glass-panel w-full max-w-md p-8 sm:p-10 relative z-10">
+
+        <!-- Identidad de Marca -->
+        <div class="text-center mb-8">
+            <h1 class="text-4xl font-extrabold text-white tracking-tight">
+                Cyber<span class="text-cyber-accent">Sentinel</span> AI
+            </h1>
+            <p class="text-sm text-slate-400 mt-2">Plataforma de Análisis de Vulnerabilidades</p>
+        </div>
+
+        <!-- Formulario vertical responsivo -->
+        <form [formGroup]="loginForm" (ngSubmit)="onSubmit()" class="flex flex-col space-y-6">
+
+            <!-- Entrada de Usuario -->
+            <div class="flex flex-col space-y-2">
+                <label for="username" class="text-sm font-semibold text-slate-300 tracking-wide">Usuario</label>
+                <input id="username" type="text" formControlName="username" placeholder="Ingrese su nombre de usuario"
+                    class="form-control"
+                    [ngClass]="{'border-sev-critical focus:border-sev-critical': loginForm.get('username')?.invalid && loginForm.get('username')?.touched}"
+                    aria-label="Nombre de usuario">
+                <span *ngIf="loginForm.get('username')?.invalid && loginForm.get('username')?.touched"
+                    class="text-xs text-sev-critical font-medium">
+                    El usuario es un campo obligatorio.
+                </span>
+            </div>
+
+            <!-- Entrada de Contraseña -->
+            <div class="flex flex-col space-y-2">
+                <label for="password" class="text-sm font-semibold text-slate-300 tracking-wide">Contraseña</label>
+                <input id="password" type="password" formControlName="password" placeholder="••••••••"
+                    class="form-control"
+                    [ngClass]="{'border-sev-critical focus:border-sev-critical': loginForm.get('password')?.invalid && loginForm.get('password')?.touched}"
+                    aria-label="Contraseña">
+                <span *ngIf="loginForm.get('password')?.invalid && loginForm.get('password')?.touched"
+                    class="text-xs text-sev-critical font-medium">
+                    La contraseña es un campo obligatorio.
+                </span>
+            </div>
+
+            <!-- Retroalimentación de Error -->
+            <div *ngIf="errorMessage"
+                class="p-3 bg-red-500/10 border border-red-500/30 rounded-lg text-sev-critical text-sm text-center font-medium animate-pulse">
+                {{ errorMessage }}
+            </div>
+
+            <!-- Botón de Acción -->
+            <button type="submit" class="btn-primary mt-2 flex justify-center items-center h-12" [disabled]="isLoading"
+                aria-label="Iniciar Sesión">
+                <span *ngIf="!isLoading">Iniciar Sesión</span>
+
+                <!-- Indicador de Carga SVG -->
+                <svg *ngIf="isLoading" class="animate-spin h-5 w-5 text-slate-900" xmlns="http://www.w3.org/2000/svg"
+                    fill="none" viewBox="0 0 24 24">
+                    <circle class="opacity-25" cx="12" cy="12" r="10" stroke="currentColor" stroke-width="4"></circle>
+                    <path class="opacity-75" fill="currentColor"
+                        d="M4 12a8 8 0 018-8V0C5.373 0 0 5.373 0 12h4zm2 5.291A7.962 7.962 0 014 12H0c0 3.042 1.135 5.824 3 7.938l3-2.647z">
+                    </path>
+                </svg>
+            </button>
+        </form>
+
+    </div>
+</div>

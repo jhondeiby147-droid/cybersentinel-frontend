@@ -1,0 +1,63 @@
+<!-- Botón Hamburguesa (Solo móvil) -->
+<button (click)="toggleMenu()"
+    class="md:hidden fixed top-4 left-4 z-50 p-2 bg-cyber-accent rounded-lg text-cyber-dark shadow-lg shadow-cyber-accent/20">
+    <svg *ngIf="!isOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 6h16M4 12h16M4 18h16" />
+    </svg>
+    <svg *ngIf="isOpen" xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+        stroke="currentColor">
+        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M6 18L18 6M6 6l12 12" />
+    </svg>
+</button>
+
+<!-- Backdrop (Fondo oscuro al abrir en móvil) -->
+<div *ngIf="isOpen" (click)="toggleMenu()"
+    class="md:hidden fixed inset-0 bg-black/60 backdrop-blur-sm z-40 transition-opacity">
+</div>
+
+<!-- Contenedor del Sidebar -->
+<nav [ngClass]="isOpen ? 'translate-x-0' : '-translate-x-full md:translate-x-0'"
+    class="fixed md:sticky top-0 left-0 z-40 flex flex-col w-64 h-screen bg-cyber-card border-r border-white/5 py-8 px-4 transition-transform duration-300 ease-in-out">
+
+    <!-- Branding -->
+    <div class="flex items-center px-4 mb-10">
+        <div
+            class="w-8 h-8 bg-cyber-accent rounded-lg flex items-center justify-center mr-3 shadow-[0_0_15px_rgba(56,189,248,0.5)]">
+            <span class="text-cyber-dark font-black text-xl">C</span>
+        </div>
+        <h1 class="text-xl font-bold text-white tracking-tighter">
+            Cyber<span class="text-cyber-accent">Sentinel</span>
+        </h1>
+    </div>
+
+    <!-- Enlaces (Modificado para usar filteredNavItems) -->
+    <div class="flex flex-col flex-1 space-y-2">
+        <a *ngFor="let item of filteredNavItems" [routerLink]="item.route" routerLinkActive="active-link"
+            (click)="isOpen = false"
+            class="flex items-center px-4 py-3 text-slate-400 hover:text-white hover:bg-white/5 rounded-lg transition-all duration-200 group">
+            <span class="w-2 h-2 mr-4 bg-slate-600 rounded-full group-hover:bg-cyber-accent"></span>
+            <span class="text-sm font-medium">{{ item.label }}</span>
+        </a>
+    </div>
+
+    <!-- User Section -->
+    <div class="mt-auto border-t border-white/5 pt-6 px-2">
+        <div class="flex items-center p-3 glass-panel mb-4">
+            <div
+                class="w-10 h-10 rounded-full bg-slate-700 flex items-center justify-center border border-white/10 text-cyber-accent font-bold">
+                {{ user?.username?.charAt(0)?.toUpperCase() }}
+            </div>
+            <div class="ml-3 overflow-hidden">
+                <p class="text-sm font-bold text-white truncate">{{ user?.username }}</p>
+                <p class="text-[10px] uppercase text-slate-500 font-bold tracking-widest">{{ user?.role }}</p>
+            </div>
+        </div>
+
+        <button (click)="onLogout()"
+            class="w-full flex items-center px-4 py-2 text-sm text-sev-critical hover:bg-red-500/10 rounded-lg transition-colors group">
+            <span class="w-2 h-2 mr-4 bg-red-900 rounded-full group-hover:bg-red-500"></span>
+            Cerrar Sesión
+        </button>
+    </div>
+</nav>

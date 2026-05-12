@@ -1,0 +1,27 @@
+:host {
+    display: block;
+}
+
+/* Scrollbar personalizado para la tabla */
+.overflow-x-auto {
+    &::-webkit-scrollbar {
+        height: 6px;
+    }
+
+    &::-webkit-scrollbar-track {
+        background: transparent;
+    }
+
+    &::-webkit-scrollbar-thumb {
+        background: rgba(56, 189, 248, 0.1);
+        border-radius: 10px;
+
+        &:hover {
+            background: rgba(56, 189, 248, 0.3);
+        }
+    }
+}
+
+tr {
+    transition: all 0.2s ease;
+}

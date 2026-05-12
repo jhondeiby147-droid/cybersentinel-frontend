@@ -1,0 +1,98 @@
+<div class="flex min-h-screen bg-cyber-dark">
+    <app-sidebar></app-sidebar>
+
+    <!-- Contenido Principal -->
+    <main class="flex-1 p-4 md:p-8 lg:p-10 overflow-y-auto">
+        <br><br><br>
+
+        <!-- Encabezado con Skeleton Loader simple -->
+        <header class="mb-10 flex justify-between items-start animate-fade-in">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">
+                    Panel de <span class="text-cyber-accent">Control</span>
+                </h1>
+                <p class="text-slate-400 mt-1">Monitoreo en tiempo real de la infraestructura de IA.</p>
+            </div>
+
+            <!-- Botón de Refrescar -->
+            <button (click)="loadStats()"
+                class="p-2 text-slate-400 hover:text-cyber-accent hover:bg-cyber-accent/10 rounded-lg transition-all"
+                title="Actualizar Datos">
+                <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="1.5"
+                    stroke="currentColor" class="w-6 h-6" [class.animate-spin]="isLoading">
+                    <path stroke-linecap="round" stroke-linejoin="round"
+                        d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                </svg>
+            </button>
+        </header>
+
+        <!-- Estado de Carga -->
+        <div *ngIf="isLoading" class="flex justify-center items-center h-64">
+            <div class="animate-spin rounded-full h-12 w-12 border-t-2 border-b-2 border-cyber-accent"></div>
+        </div>
+
+        <div *ngIf="!isLoading && stats" class="animate-fade-in">
+
+            <!-- Rejilla de KPIs (Responsiva: 1 col móvil, 3 col desktop) -->
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-8">
+
+                <!-- Total Scans -->
+                <div class="glass-panel p-6 border-b-2 border-b-cyber-accent">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Análisis Totales</p>
+                    <p class="text-5xl font-black text-white">{{ stats.total_scans }}</p>
+                </div>
+
+                <!-- Confianza Promedio -->
+                <div class="glass-panel p-6 border-b-2 border-b-sky-500">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Confianza IA</p>
+                    <p class="text-5xl font-black text-white">{{ (stats.average_confidence * 100).toFixed(1) }}%</p>
+                </div>
+
+                <!-- Amenazas Críticas -->
+                <div class="glass-panel p-6 border-b-2 border-b-sev-critical">
+                    <p class="text-slate-400 text-xs font-bold uppercase tracking-widest mb-2">Alertas Críticas</p>
+                    <p class="text-5xl font-black text-sev-critical">{{ stats.severity_distribution.Critica }}</p>
+                </div>
+
+            </div>
+
+            <!-- Sección de Gráficos e Información Detallada -->
+            <div class="grid grid-cols-1 lg:grid-cols-5 gap-6">
+
+                <!-- Gráfica de Distribución (60% ancho en desktop) -->
+                <div class="lg:col-span-3 glass-panel p-8">
+                    <div class="flex items-center justify-between mb-8">
+                        <h3 class="text-lg font-bold text-white">Distribución de Riesgos</h3>
+                        <span class="text-[10px] bg-white/10 px-2 py-1 rounded text-slate-300">ACTUALIZADO</span>
+                    </div>
+                    <div class="relative h-80">
+                        <canvas #severityChart></canvas>
+                    </div>
+                </div>
+
+                <!-- Resumen Rápido de Niveles (40% ancho en desktop) -->
+                <div class="lg:col-span-2 space-y-4 flex flex-col justify-between">
+                    <div class="glass-panel p-6 flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Vulnerabilidades Altas</span>
+                        <span class="text-xl font-bold text-sev-high">{{ stats.severity_distribution.Alta }}</span>
+                    </div>
+                    <div class="glass-panel p-6 flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Vulnerabilidades Medias</span>
+                        <span class="text-xl font-bold text-sev-medium">{{ stats.severity_distribution.Media }}</span>
+                    </div>
+                    <div class="glass-panel p-6 flex items-center justify-between">
+                        <span class="text-sm font-medium text-slate-300">Vulnerabilidades Bajas</span>
+                        <span class="text-xl font-bold text-sev-low">{{ stats.severity_distribution.Baja }}</span>
+                    </div>
+                    <div class="p-6 bg-cyber-accent/10 border border-cyber-accent/20 rounded-xl">
+                        <p class="text-sm text-cyber-accent font-semibold mb-1">Sugerencia de la IA</p>
+                        <p class="text-xs text-slate-400 leading-relaxed">
+                            Se detectó un aumento en logs críticos. Prioriza la revisión del endpoint de autenticación.
+                        </p>
+                    </div>
+                </div>
+
+            </div>
+        </div>
+    </main>
+</div>

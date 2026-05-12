@@ -1,0 +1,102 @@
+<div class="flex min-h-screen bg-cyber-dark">
+    <app-sidebar></app-sidebar>
+
+    <main class="flex-1 p-4 md:p-8 lg:p-12 overflow-y-auto">
+        <br><br><br>
+
+        <header class="mb-10">
+            <h1 class="text-3xl font-extrabold text-white">Scanner <span class="text-cyber-accent">Neural</span></h1>
+            <p class="text-slate-400">Carga logs técnicos para análisis de severidad y extracción de entidades.</p>
+        </header>
+
+        <div class="grid grid-cols-1 lg:grid-cols-2 gap-8">
+
+            <!-- Lado Izquierdo: Entrada de Datos (RF-02) -->
+            <section class="flex flex-col space-y-4">
+                <div class="glass-panel p-6">
+                    <label class="block text-sm font-bold text-slate-300 mb-4 uppercase tracking-widest">Entrada de Log
+                        Técnico</label>
+                    <textarea [(ngModel)]="logText"
+                        placeholder="Pegue aquí el log o descripción técnica de la vulnerabilidad..."
+                        class="form-control h-64 resize-none font-mono text-sm"></textarea>
+
+                    <button (click)="analyze()" [disabled]="isLoading || !logText"
+                        class="btn-primary w-full mt-6 flex justify-center items-center">
+                        <span *ngIf="!isLoading">Iniciar Análisis de IA</span>
+                        <div *ngIf="isLoading" class="flex items-center gap-2">
+                            <div class="animate-spin rounded-full h-4 w-4 border-t-2 border-white"></div>
+                            <span>{{ loadingMessage }}</span>
+                        </div>
+                    </button>
+                </div>
+            </section>
+
+            <!-- Lado Derecho: Resultados (RF-03, 04, 05, 10) -->
+            <section class="space-y-6">
+
+                <!-- Placeholder cuando no hay datos -->
+                <div *ngIf="!results && !isLoading"
+                    class="glass-panel h-full border-dashed border-white/10 flex flex-col items-center justify-center p-10 text-center">
+                    <div class="w-16 h-16 bg-white/5 rounded-full mb-4 flex items-center justify-center">
+                        <span class="text-slate-600 text-3xl">🔍</span>
+                    </div>
+                    <p class="text-slate-500 italic">Esperando datos para procesar...</p>
+                </div>
+
+                <!-- Resultados del Análisis -->
+                <div *ngIf="results" class="animate-fade-in space-y-6">
+
+                    <!-- Card de Severidad y Confianza -->
+                    <div class="glass-panel p-6 flex flex-col md:flex-row justify-between items-center gap-4">
+                        <div class="text-center md:text-left">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Nivel de Riesgo
+                            </p>
+                            <div
+                                [class]="'mt-1 px-4 py-1 rounded-full border text-lg font-black uppercase ' + getSeverityClass(results.severity)">
+                                {{ results.severity }}
+                            </div>
+                        </div>
+                        <div class="text-center md:text-right">
+                            <p class="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Confianza del
+                                Modelo</p>
+                            <p class="text-3xl font-black text-white">{{ (results.confidence_score * 100).toFixed(1) }}%
+                            </p>
+                        </div>
+                    </div>
+
+                    <div *ngIf="results.confidence_score < 0.5"
+                        class="bg-yellow-500/10 border border-yellow-500/30 p-3 rounded-lg mb-4">
+                        <p class="text-yellow-500 text-[10px] font-bold italic">
+                            ⚠️ AVISO: El modelo de IA reporta baja confianza en este análisis. Verifique los datos
+                            manualmente.
+                        </p>
+                    </div>
+
+                    <!-- Resumen Ejecutivo con Efecto Typewriter (RF-05) -->
+                    <div class="glass-panel p-6 border-l-4 border-l-cyber-accent">
+                        <h3 class="text-cyber-accent font-bold text-sm mb-3 uppercase tracking-tighter italic">
+                            Resumen de IA</h3>
+                        <p class="text-slate-200 leading-relaxed font-medium">
+                            {{ displayText }}<span
+                                class="animate-pulse bg-cyber-accent w-2 h-4 inline-block ml-1"></span>
+                        </p>
+                    </div>
+
+                    <!-- Entidades Detectadas (RF-04) -->
+                    <div class="glass-panel p-6">
+                        <h3 class="text-white font-bold text-sm mb-4">Entidades Técnicas Extraídas</h3>
+                        <div class="flex flex-wrap gap-2">
+                            <div *ngFor="let entity of results.entities"
+                                class="bg-white/5 border border-white/10 px-3 py-2 rounded-lg">
+                                <span class="text-[10px] block text-slate-500 font-bold uppercase">{{ entity.category
+                                    }}</span>
+                                <span class="text-sm text-cyber-accent font-mono">{{ entity.entity }}</span>
+                            </div>
+                        </div>
+                    </div>
+
+                </div>
+            </section>
+        </div>
+    </main>
+</div>

@@ -1,0 +1,136 @@
+<div class="flex min-h-screen bg-cyber-dark">
+    <app-sidebar></app-sidebar>
+
+    <main class="flex-1 p-4 md:p-8 lg:p-12 overflow-y-auto">
+        <br><br><br>
+
+        <header class="mb-10 flex flex-col md:flex-row md:items-center justify-between gap-4">
+            <div>
+                <h1 class="text-3xl font-extrabold text-white tracking-tight">Registro de <span
+                        class="text-cyber-accent">Auditoría</span></h1>
+                <p class="text-slate-400">Historial completo de análisis y consultas realizadas.</p>
+            </div>
+
+            <!-- Botones de Acción -->
+            <div class="flex flex-col sm:flex-row items-center gap-3">
+                <button (click)="exportToExcel()" *ngIf="logs.length > 0 && !isLoading"
+                    class="group flex items-center gap-2 px-5 py-2.5 border border-green-500/50 text-green-400 hover:bg-green-500 hover:text-white font-bold rounded-xl shadow-lg transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2"
+                        stroke="currentColor" class="w-5 h-5">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M3 16.5v2.25A2.25 2.25 0 0 0 5.25 21h13.5A2.25 2.25 0 0 0 21 18.75V16.5M16.5 12 12 16.5m0 0L7.5 12m4.5 4.5V3" />
+                    </svg>
+                    <span>EXPORTAR EXCEL</span>
+                </button>
+
+                <button (click)="loadLogs()"
+                    class="group flex items-center gap-3 px-5 py-2.5 bg-cyber-accent text-cyber-dark font-bold rounded-xl shadow-lg shadow-cyber-accent/20 hover:scale-105 active:scale-95 transition-all">
+                    <svg xmlns="http://www.w3.org/2000/svg" fill="none" viewBox="0 0 24 24" stroke-width="2.5"
+                        stroke="currentColor" class="w-5 h-5" [class.animate-spin]="isLoading">
+                        <path stroke-linecap="round" stroke-linejoin="round"
+                            d="M16.023 9.348h4.992v-.001M2.985 19.644v-4.992m0 0h4.992m-4.993 0 3.181 3.183a8.25 8.25 0 0 0 13.803-3.7M4.031 9.865a8.25 8.25 0 0 1 13.803-3.7l3.181 3.182m0-4.991v4.99" />
+                    </svg>
+                    <span>RECARGAR REGISTROS</span>
+                </button>
+            </div>
+        </header>
+
+        <!-- Estado de Carga -->
+        <div *ngIf="isLoading" class="flex justify-center py-20">
+            <div class="animate-spin rounded-full h-10 w-10 border-b-2 border-cyber-accent"></div>
+        </div>
+
+        <!-- Contenedor de la Tabla y Paginación -->
+        <div *ngIf="!isLoading" class="glass-panel overflow-hidden border border-white/5 flex flex-col">
+            <div class="overflow-x-auto">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-white/5 border-b border-white/10">
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Fecha / Usuario
+                            </th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Entrada (Log)
+                            </th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest">Severidad</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-center">
+                                Confianza</th>
+                            <th class="p-4 text-xs font-bold text-slate-400 uppercase tracking-widest text-right">
+                                Acciones</th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-white/5">
+                        <!-- ¡AQUÍ CAMBIÓ! Iteramos sobre paginatedLogs en lugar de logs -->
+                        <tr *ngFor="let log of paginatedLogs" class="hover:bg-white/[0.02] transition-colors group">
+
+                            <td class="p-4">
+                                <p class="text-sm font-bold text-white">{{ log.username }}</p>
+                                <p class="text-[10px] text-slate-500">{{ log.timestamp | date:'short' }}</p>
+                            </td>
+
+                            <td class="p-4 max-w-xs">
+                                <p class="text-xs text-slate-400 truncate font-mono italic">"{{ log.original_text }}"
+                                </p>
+                            </td>
+
+                            <td class="p-4">
+                                <span
+                                    [class]="'px-3 py-1 rounded text-[10px] font-black uppercase border border-current ' + getSeverityClass(log.severity)">
+                                    {{ log.severity }}
+                                </span>
+                            </td>
+
+                            <td class="p-4 text-center">
+                                <span class="text-sm font-bold text-slate-200">{{ (log.confidence_score *
+                                    100).toFixed(1) }}%</span>
+                            </td>
+
+                            <td class="p-4 text-right">
+                                <button (click)="exportToExcel(log)"
+                                    class="text-cyber-accent hover:text-white text-xs font-bold uppercase tracking-widest flex items-center justify-end gap-2 transition-colors ml-auto">
+                                    <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="none"
+                                        viewBox="0 0 24 24" stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M4 16v1a2 2 0 002 2h12a2 2 0 002-2v-1m-4-4l-4 4m0 0l-4-4m4 4V4" />
+                                    </svg>
+                                    .XLSX
+                                </button>
+                            </td>
+
+                        </tr>
+                    </tbody>
+                </table>
+            </div>
+
+            <!-- Empty State -->
+            <div *ngIf="logs.length === 0" class="p-20 text-center">
+                <p class="text-slate-500 italic">No se encontraron registros de auditoría.</p>
+            </div>
+
+            <!-- CONTROLES DE PAGINACIÓN -->
+            <div *ngIf="logs.length > 0"
+                class="px-6 py-4 border-t border-white/10 bg-white/[0.01] flex flex-col sm:flex-row items-center justify-between gap-4">
+                <p class="text-xs text-slate-400 font-mono">
+                    Mostrando del <span class="text-white font-bold">{{ currentStartIndex }}</span> al
+                    <span class="text-white font-bold">{{ currentEndIndex }}</span> de
+                    <span class="text-white font-bold">{{ logs.length }}</span> registros
+                </p>
+
+                <div class="flex items-center gap-2">
+                    <button (click)="prevPage()" [disabled]="currentPage === 1"
+                        class="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-wider">
+                        Anterior
+                    </button>
+
+                    <span
+                        class="px-4 py-1.5 text-xs font-bold text-cyber-accent bg-cyber-accent/10 rounded-lg border border-cyber-accent/20">
+                        Pág {{ currentPage }} / {{ totalPages }}
+                    </span>
+
+                    <button (click)="nextPage()" [disabled]="currentPage === totalPages || totalPages === 0"
+                        class="px-3 py-1.5 rounded-lg border border-white/10 text-xs font-bold text-slate-300 hover:bg-white/10 hover:text-white disabled:opacity-30 disabled:cursor-not-allowed transition-all uppercase tracking-wider">
+                        Siguiente
+                    </button>
+                </div>
+            </div>
+        </div>
+    </main>
+</div>
